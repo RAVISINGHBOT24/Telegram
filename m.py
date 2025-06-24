@@ -18,7 +18,17 @@ BOT_USERNAME = "VIPUSERRS77_BOT"  # Without @
 app = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 warn_data = {}
-admins = set([OWNER_ID])
+
+# Load & Save Admins
+try:
+    with open("admins.json", "r") as f:
+        admins = set(json.load(f))
+except:
+    admins = set()
+
+def save_admins():
+    with open("admins.json", "w") as f:
+        json.dump(list(admins), f)
 
 try:
     with open("data.json", "r") as f:
@@ -169,10 +179,8 @@ async def promo(_, m: Message):
         return
 
     target = None
-    # Case 1: Reply se user
     if m.reply_to_message and m.reply_to_message.from_user:
         target = m.reply_to_message.from_user
-    # Case 2: Command me @username ya ID
     elif len(m.command) > 1:
         try:
             target = await app.get_users(m.command[1])
@@ -184,6 +192,7 @@ async def promo(_, m: Message):
         return
 
     admins.add(target.id)
+    save_admins()
     await m.reply(f"✅ {target.mention} ab bot admin ban gaya hai.")
 
 @app.on_message(filters.command("demote") & filters.group)
@@ -192,10 +201,8 @@ async def demote(_, m: Message):
         return
 
     target = None
-    # Case 1: Reply se user
     if m.reply_to_message and m.reply_to_message.from_user:
         target = m.reply_to_message.from_user
-    # Case 2: Command me @username ya ID
     elif len(m.command) > 1:
         try:
             target = await app.get_users(m.command[1])
@@ -207,7 +214,49 @@ async def demote(_, m: Message):
         return
 
     admins.discard(target.id)
+    save_admins()
     await m.reply(f"❌ {target.mention} ko bot admin se hata diya gaya.")
+
+@app.on_message(filters.command("adminlist") & filters.group)
+async def adminlist(_, m: Message):
+    if not m.from_user or m.from_user.id != OWNER_ID:
+        return
+
+    if not admins:
+        await m.reply("❌ Abhi koi bhi bot admin nahi hai.")
+        return
+
+    msg = "**👑 Bot Admins:**\n\n"
+    for uid in admins:
+        try:
+            user = await app.get_users(uid)
+            name = f"@{user.username}" if user.username else user.first_name
+            msg += f"• {name} (`{uid}`)\n"
+        except:
+            msg += f"• [Unknown User] (`{uid}`)\n"
+
+    await m.reply(msg)
+
+@app.on_message(filters.command("status") & filters.user(OWNER_ID))
+async def status(_, m: Message):
+    total_warns = len(warn_data)
+    total_admins = len(admins)
+    
+    # Placeholder values (agar mute/ban track nahi ho raha to manually update karo)
+    total_muted = 0
+    total_banned = 0
+    total_groups = stats_data.get("groups_count", 0)
+
+    msg = f"""
+🤖 **Bot Status**
+
+👥 Warned Users: `{total_warns}`
+🔇 Muted Users: `{total_muted}`
+🚫 Banned Users: `{total_banned}`
+👑 Bot Admins: `{total_admins}`
+📊 Groups Joined: `{total_groups}`
+"""
+    await m.reply_text(msg.strip())
 
 @app.on_message(filters.group & filters.text)
 async def detect_links(_, m: Message):
