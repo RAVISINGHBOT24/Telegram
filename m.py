@@ -6,7 +6,8 @@ from datetime import datetime, timedelta
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import Client, filters
 from pyrogram.types import Message
-
+from webserver import start_web
+start_web()  # start Flask web server in background
 
 API_ID = 20249833
 API_HASH = "4d8a602fa4581d86666033e8a1b5cd28"
