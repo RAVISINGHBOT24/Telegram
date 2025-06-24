@@ -111,7 +111,42 @@ async def mute(_, m: Message):
     except Exception as e:
         await m.reply(f"❌ Mute karne mein error aaya.\n\nError: `{e}`")
 
-from pyrogram.types import ChatPermissions
+@app.on_message(filters.command("ban") & filters.group)
+async def ban(_, m: Message):
+    if not m.from_user or not is_admin(m.from_user.id):
+        return
+
+    target = None
+    if m.reply_to_message and m.reply_to_message.from_user:
+        target = m.reply_to_message.from_user
+    elif len(m.command) > 1:
+        try:
+            target = await app.get_users(m.command[1])
+        except:
+            await m.reply("❌ User nahi mila. Sahi @username ya ID do.")
+            return
+    else:
+        await m.reply("⚠️ Usage: Reply karo ya `/ban @username` likho.")
+        return
+
+    try:
+        await m.chat.ban_member(target.id)
+
+        # 🎮 Gaming style ban lines
+        gaming_lines = [
+            f"💥 *HEADSHOT!* 🎯 {target.mention} eliminated from the match!",
+            f"🛑 {target.mention} was banned by OP — *Legendary Kill!*",
+            f"🚫 {target.mention} tried to escape... but failed. *BAN FINISHER!* 😎",
+            f"🎮 {target.mention} disconnected — *Banned by Admin Force* 🔨",
+            f"🔥 {target.mention} was *sniped* by Ravi Bhai! OUT of the lobby!",
+            f"💣 Boom! {target.mention} has been permanently banned from this server!",
+            f"☠️ {target.mention} got *rekt* — Exiled from the game zone!",
+        ]
+
+        await m.reply(random.choice(gaming_lines), quote=True)
+
+    except Exception as e:
+        await m.reply(f"❌ Ban karne mein error aaya.\n\nError: `{e}`")
 
 @app.on_message(filters.command("unmute") & filters.group)
 async def unmute(_, m: Message):
