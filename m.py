@@ -296,17 +296,20 @@ async def status(_, m: Message):
 @app.on_message(filters.group & filters.text)
 async def detect_links(_, m: Message):
     if not m.from_user or is_admin(m.from_user.id): return
-    if re.search(r"https?://|t\\.me|@", m.text):
+
+    # Detect any kind of link (.com, .in, etc.), but ignore @mention
+    if re.search(r"(https?://\S+|www\.\S+|\S+\.\S+)", m.text):
         await m.delete()
         uid = str(m.from_user.id)
         warn_data[uid] = warn_data.get(uid, 0) + 1
         save_data()
+
         if warn_data[uid] >= 3:
             try:
                 await m.chat.ban_member(m.from_user.id)
                 warn_data[uid] = 0
                 save_data()
-                await m.reply(f"🚫 {m.from_user.mention} ko 3 link ke baad ban kiya gaya.")
+                await m.reply(f"🚫 {m.from_user.mention} ko 3 baar link bhejne ke baad ban kiya gaya.")
             except:
                 pass
         else:
