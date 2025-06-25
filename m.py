@@ -316,17 +316,26 @@ async def detect_links(_, m: Message):
             await m.reply(f"⚠️ {m.from_user.mention} link mat bhejo! Warning {warn_data[uid]}/3")
 
 @app.on_message(filters.new_chat_members)
-async def welcome(_, m: Message):
+async def custom_welcome(_, m: Message):
     for user in m.new_chat_members:
-        name = f"@{user.username}" if user.username else user.first_name
-        try:
-            user_info = await app.get_chat(user.id)
-            if user_info.photo:
-                await m.reply_photo(user_info.photo.big_file_id, caption=f"👋 Welcome {name}!")
-            else:
-                await m.reply(f"👋 Welcome {name}!")
-        except:
-            await m.reply(f"👋 Welcome {name}!")
+        name = user.first_name
+        uid = user.id
+        uname = f"@{user.username}" if user.username else "No Username"
+        
+        welcome_text = f"""
+✨ 𝗪𝗲𝗹𝗰𝗼𝗺𝗲 𝗧𝗼 𝗧𝗵𝗲 𝗚𝗿𝗼𝘂𝗽 ✨
+
+⦿ 𝗡𝗔𝗠𝗘 ➟ {name}
+⦿ 𝗜𝗗 ➟ `{uid}`
+⦿ 𝗨𝗦𝗘𝗥𝗡𝗔𝗠𝗘 ➟ {uname}
+⦿ 𝗠𝗔𝗗𝗘 𝗕𝗬 ➟ [Ravi](https://t.me/R_SDANGER77) 🔱
+"""
+
+        await m.reply_photo(
+            photo="https://te.legra.ph/file/9f9a03e0a6e6c5952f1f6.jpg",
+            caption=welcome_text,
+            parse_mode="markdown"
+        )
 
 leave_msgs = [
     "{name} gaya... Ab group main shanti hai 😎",
