@@ -321,7 +321,7 @@ async def detect_links(_, m: Message):
             await m.reply(f"⚠️ {m.from_user.mention} link mat bhejo! Warning {warn_data[uid]}/3")
 
 @app.on_message(filters.new_chat_members)
-async def welcome_with_photo(_, m: Message):
+async def welcome_with_photo(client, m: Message):
     for user in m.new_chat_members:
         name = user.first_name or "Unknown"
         uid = user.id
@@ -337,10 +337,12 @@ async def welcome_with_photo(_, m: Message):
 """
 
         try:
-            # ✅ Pyrogram v2: correct method to get profile photo
-            photos = await _.get_chat_photos(user.id, limit=1)
-            if photos:
-                photo_id = photos[0].file_id
+            photo_id = None
+            async for photo in client.get_chat_photos(user.id, limit=1):  # ✅ This is correct in v2
+                photo_id = photo.file_id
+                break
+
+            if photo_id:
                 await m.reply_photo(
                     photo=photo_id,
                     caption=welcome_text,
@@ -348,6 +350,7 @@ async def welcome_with_photo(_, m: Message):
                 )
             else:
                 await m.reply(welcome_text, parse_mode=ParseMode.HTML)
+
         except Exception as e:
             await m.reply(f"❌ Error: {e}")
 
