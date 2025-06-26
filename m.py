@@ -337,7 +337,8 @@ async def welcome_with_photo(_, m: Message):
 """
 
         try:
-            photos = await _.get_profile_photos(user.id, limit=1)  # ✅ Yeh fix hai
+            # ✅ Pyrogram v2: correct method to get profile photo
+            photos = await _.get_chat_photos(user.id, limit=1)
             if photos:
                 photo_id = photos[0].file_id
                 await m.reply_photo(
