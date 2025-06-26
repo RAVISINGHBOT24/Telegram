@@ -7,6 +7,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from webserver import start_web
+from pyrogram.enums import ParseMode
 start_web()  # start Flask web server in background
 
 API_ID = 20249833
@@ -334,7 +335,7 @@ async def custom_welcome(_, m: Message):
         await m.reply_photo(
             photo="https://te.legra.ph/file/9f9a03e0a6e6c5952f1f6.jpg",
             caption=welcome_text,
-            parse_mode="HTML"
+            parse_mode=ParseMode.HTML  # ✅ Yeh correct hai for Pyrogram v2+
         )
 
 leave_msgs = [
