@@ -327,7 +327,6 @@ async def welcome_with_photo(_, m: Message):
         uid = user.id
         uname = f"@{user.username}" if user.username else "No Username"
 
-        # 🔥 Caption with clickable Ravi
         welcome_text = f"""
 ✨ <b>WELCOME TO THE GROUP</b> ✨
 
@@ -338,17 +337,15 @@ async def welcome_with_photo(_, m: Message):
 """
 
         try:
-            photos = await app.get_profile_photos(user.id, limit=1)
+            photos = await _.get_profile_photos(user.id, limit=1)  # ✅ Yeh fix hai
             if photos:
                 photo_id = photos[0].file_id
-                # ✅ Photo first, caption below it
                 await m.reply_photo(
                     photo=photo_id,
                     caption=welcome_text,
                     parse_mode=ParseMode.HTML
                 )
             else:
-                # No photo fallback
                 await m.reply(welcome_text, parse_mode=ParseMode.HTML)
         except Exception as e:
             await m.reply(f"❌ Error: {e}")
