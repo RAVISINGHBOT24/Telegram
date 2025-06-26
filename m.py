@@ -13,6 +13,7 @@ from pyrogram import filters
 from pyrogram.enums import ParseMode
 start_web()  # start Flask web server in background
 
+
 API_ID = 20249833
 API_HASH = "4d8a602fa4581d86666033e8a1b5cd28"
 BOT_TOKEN = "7712914052:AAHowCymSw9WSz9SzDsOydhXhDcIMKsdrrs"
@@ -302,7 +303,7 @@ async def detect_links(_, m: Message):
     if not m.from_user or is_admin(m.from_user.id): return
 
     # Detect any kind of link (.com, .in, etc.), but ignore @mention
-    if re.search(r"(https?://\S+|www\.\S+|\S+\.\S+)", m.text):
+    if re.search(r"(https?://[^\s]+|www\.[^\s]+|t\.me/[^\s]+)", m.text):
         await m.delete()
         uid = str(m.from_user.id)
         warn_data[uid] = warn_data.get(uid, 0) + 1
@@ -319,17 +320,14 @@ async def detect_links(_, m: Message):
         else:
             await m.reply(f"⚠️ {m.from_user.mention} link mat bhejo! Warning {warn_data[uid]}/3")
 
-@app.on_message(filters.private & filters.photo)
-async def get_file_id(_, m: Message):
-    await m.reply(f"📸 File ID:\n`{m.photo.file_id}`")
-
 @app.on_message(filters.new_chat_members)
-async def custom_welcome(_, m: Message):
+async def welcome_with_photo(_, m: Message):
     for user in m.new_chat_members:
-        name = user.first_name
+        name = user.first_name or "Unknown"
         uid = user.id
         uname = f"@{user.username}" if user.username else "No Username"
 
+        # 🔥 Caption with clickable Ravi
         welcome_text = f"""
 ✨ <b>WELCOME TO THE GROUP</b> ✨
 
@@ -339,11 +337,21 @@ async def custom_welcome(_, m: Message):
 ⦿ <b>MADE BY</b> ➟ <a href='https://t.me/R_SDANGER77'>Ravi</a> 🔱
 """
 
-        await m.reply_photo(
-            photo="AgACAgUAAxkBAAIBUWYr1_a8eD...yewala_tera_file_id",  # 🔁 Yahan apna File ID daalo
-            caption=welcome_text,
-            parse_mode=ParseMode.HTML
-        )
+        try:
+            photos = await app.get_profile_photos(user.id, limit=1)
+            if photos:
+                photo_id = photos[0].file_id
+                # ✅ Photo first, caption below it
+                await m.reply_photo(
+                    photo=photo_id,
+                    caption=welcome_text,
+                    parse_mode=ParseMode.HTML
+                )
+            else:
+                # No photo fallback
+                await m.reply(welcome_text, parse_mode=ParseMode.HTML)
+        except Exception as e:
+            await m.reply(f"❌ Error: {e}")
 
 leave_msgs = [
     "{name} gaya... Ab group main shanti hai 😎",
