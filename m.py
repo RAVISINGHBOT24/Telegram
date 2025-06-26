@@ -317,11 +317,15 @@ async def detect_links(_, m: Message):
 
 @app.on_message(filters.new_chat_members)
 async def custom_welcome(_, m: Message):
+    print("🟢 New member joined")  # Check console log
+    
     for user in m.new_chat_members:
+        print(f"👤 New user: {user.id}")  # More debug log
+        
         name = user.first_name
         uid = user.id
         uname = f"@{user.username}" if user.username else "No Username"
-        
+
         welcome_text = f"""
 ✨ 𝗪𝗲𝗹𝗰𝗼𝗺𝗲 𝗧𝗼 𝗧𝗵𝗲 𝗚𝗿𝗼𝘂𝗽 ✨
 
