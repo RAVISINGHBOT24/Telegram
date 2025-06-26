@@ -317,28 +317,24 @@ async def detect_links(_, m: Message):
 
 @app.on_message(filters.new_chat_members)
 async def custom_welcome(_, m: Message):
-    print("🟢 New member joined")  # Check console log
-    
     for user in m.new_chat_members:
-        print(f"👤 New user: {user.id}")  # More debug log
-        
         name = user.first_name
         uid = user.id
         uname = f"@{user.username}" if user.username else "No Username"
 
         welcome_text = f"""
-✨ 𝗪𝗲𝗹𝗰𝗼𝗺𝗲 𝗧𝗼 𝗧𝗵𝗲 𝗚𝗿𝗼𝘂𝗽 ✨
+✨ <b>WELCOME TO THE GROUP</b> ✨
 
-⦿ 𝗡𝗔𝗠𝗘 ➟ {name}
-⦿ 𝗜𝗗 ➟ `{uid}`
-⦿ 𝗨𝗦𝗘𝗥𝗡𝗔𝗠𝗘 ➟ {uname}
-⦿ 𝗠𝗔𝗗𝗘 𝗕𝗬 ➟ [Ravi](https://t.me/R_SDANGER77) 🔱
+⦿ <b>NAME</b> ➟ {name}
+⦿ <b>ID</b> ➟ <code>{uid}</code>
+⦿ <b>USERNAME</b> ➟ {uname}
+⦿ <b>MADE BY</b> ➟ <a href='https://t.me/R_SDANGER77'>Ravi</a> 🔱
 """
 
         await m.reply_photo(
             photo="https://te.legra.ph/file/9f9a03e0a6e6c5952f1f6.jpg",
             caption=welcome_text,
-            parse_mode="markdown"
+            parse_mode="HTML"
         )
 
 leave_msgs = [
