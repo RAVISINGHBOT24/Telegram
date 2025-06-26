@@ -8,6 +8,9 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from webserver import start_web
 from pyrogram.enums import ParseMode
+from pyrogram.types import Message
+from pyrogram import filters
+from pyrogram.enums import ParseMode
 start_web()  # start Flask web server in background
 
 API_ID = 20249833
@@ -316,6 +319,10 @@ async def detect_links(_, m: Message):
         else:
             await m.reply(f"⚠️ {m.from_user.mention} link mat bhejo! Warning {warn_data[uid]}/3")
 
+@app.on_message(filters.private & filters.photo)
+async def get_file_id(_, m: Message):
+    await m.reply(f"📸 File ID:\n`{m.photo.file_id}`")
+
 @app.on_message(filters.new_chat_members)
 async def custom_welcome(_, m: Message):
     for user in m.new_chat_members:
@@ -333,9 +340,9 @@ async def custom_welcome(_, m: Message):
 """
 
         await m.reply_photo(
-            photo="https://te.legra.ph/file/9f9a03e0a6e6c5952f1f6.jpg",
+            photo="AgACAgUAAxkBAAIBUWYr1_a8eD...yewala_tera_file_id",  # 🔁 Yahan apna File ID daalo
             caption=welcome_text,
-            parse_mode=ParseMode.HTML  # ✅ Yeh correct hai for Pyrogram v2+
+            parse_mode=ParseMode.HTML
         )
 
 leave_msgs = [
