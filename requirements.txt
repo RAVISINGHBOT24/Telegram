@@ -1,5 +1,5 @@
 pyrogram==2.0.106
 tgcrypto
 flask
-pytgcalls==1.2.2
+pytgcalls
 yt_dlp
