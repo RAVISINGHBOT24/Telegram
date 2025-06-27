@@ -573,9 +573,9 @@ async def play(_, message):
     await msg.delete()
     await message.reply_photo(
         photo=thumbnail,
-        caption=f"🎵 **Now Playing:** {title}
+        caption=f"""🎵 **Now Playing:** {title}
 ⏱️ **Duration:** {duration_min}
-📶 **Status:** Playing...",
+📶 **Status:** Playing...""",
         reply_markup=buttons
     )
 
